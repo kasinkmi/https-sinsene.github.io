@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>สูตรบาคาร่า</title>
+  <style>
+    body { font-family: sans-serif; max-width: 480px; margin: auto; padding: 1em; background: #f9f9f9; }
+    h1 { text-align: center; color: #006600; }
+    .card { background: white; padding: 1em; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 1em; }
+    button { padding: 0.5em 1em; margin: 0.5em; font-size: 1em; border: none; border-radius: 6px; }
+    .btn { background-color: #007bff; color: white; }
+    .btn:active { transform: scale(0.98); }
+  </style>
+</head>
+<body>
+  <h1>สูตรบาคาร่า</h1>
+  <div class="card">
+    <p><strong>ผลลัพธ์ก่อนหน้า:</strong> <span id="history">-</span></p>
+    <p><strong>แนะนำตาต่อไป:</strong> <span id="suggestion">-</span></p>
+    <p><strong>เดิมพัน:</strong> <span id="bet">1</span> หน่วย</p>
+    <p><strong>กำไร/ขาดทุนสะสม:</strong> <span id="profit">0</span> หน่วย</p>
+  </div>
+  <div class="card">
+    <p><strong>ป้อนผลลัพธ์รอบนี้:</strong></p>
+    <button class="btn" onclick="record('P')">Player (P)</button>
+    <button class="btn" onclick="record('B')">Banker (B)</button>
+    <button class="btn" onclick="record('reset')">🔄 เริ่มใหม่</button>
+  </div>
+
+<script>
+  let history = [];
+  let lastBet = 1;
+  let totalProfit = 0;
+
+  function updateUI() {
+    document.getElementById('history').innerText = history.join(' - ') || "-";
+    let next = '-';
+    if (history.length >= 2) {
+      let h1 = history[history.length - 1];
+      let h2 = history[history.length - 2];
+      next = h1 === h2 ? h1 : (h1 === "P" ? "B" : "P");
+    }
+    document.getElementById('suggestion').innerText = next;
+    document.getElementById('bet').innerText = lastBet;
+    document.getElementById('profit').innerText = totalProfit;
+  }
+
+  function record(result) {
+    if (result === 'reset') {
+      history = [];
+      lastBet = 1;
+      totalProfit = 0;
+    } else {
+      if (history.length > 0) {
+        let expected = document.getElementById('suggestion').innerText;
+        let won = expected === result;
+        totalProfit += won ? lastBet : -lastBet;
+        lastBet = won ? 1 : lastBet * 2;
+      }
+      history.push(result);
+    }
+    updateUI();
+  }
+
+  updateUI();
+</script>
+</body>
+</html>
